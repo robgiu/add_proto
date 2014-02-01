@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content = "height = device-height, width = 420, user-scalable = yes" /> 
+        <title>Sermig Aquaponia Control</title>
+        <script type="text/javascript" src="/webiopi.js"></script>
+        <script type="text/javascript">
+	 	temp0 = 0
+		lum0 = 0
+        webiopi().ready(function() {
+              var controls, content, button, buttonR1, buttonR2;
+              content = $("#content");
+	      controls= $("#controls");
+
+ 		// create a "LED" labeled button for GPIO 17
+		button = webiopi().createGPIOButton(17, "STATUS OK");
+		content.append(button); // append button to content div
+
+		// create a button which call Temp0 		
+                button = webiopi().createButton("macro0", "Temperature", callMacro_Temp);
+		content.append(button); // append button to content div
+		webiopi().setClass("macro0", "Temp"); //set color state
+
+		// create buttons to activate RELAY1 and RELAY2
+		buttonR1 = webiopi().createGPIOButton(2, "Relay 1");
+		controls.append(buttonR1);
+                buttonR2 = webiopi().createGPIOButton(3, "Relay 2");
+                controls.append(buttonR2);
+		webiopi().refreshGPIO(true);
+
+      });
+		function callMacro_SETPIO17(){
+			webiopi().toggleValue(17);
+			callMacro_GETPIO()}
+		setInterval ("callMacro_GETPIO()", 5000);{
+	}
+		function callMacro_GETPIO(){
+			var args = [0]
+			webiopi().callMacro("GETPIO", args, macro_GETPIO_Callback);}
+		function macro_GETPIO_Callback(macro, args, data){
+			g0 = data.split(" ")[0];
+			if (g0==1){
+				webiopi().setClass("macro17", "ON");
+				webiopi().setLabel("macro17", "GPIO 17 On");}
+			else{
+				webiopi().setClass("macro17", "OFF");
+				webiopi().setLabel("macro17", "GPIO 17 Off");}
+
+       }
+
+	setInterval ("callMacro_Temp()", 5000);{
+       }
+
+	function callMacro_Temp(){
+		var args = [0]
+		webiopi().callMacro("Temp", args, macro_Temp_Callback);}
+	function macro_Temp_Callback(macro, args, data){
+
+		temp0 = data.split(" ")[0];
+		myDiv0.innerHTML = data.split(" ")[0] +" °C";
+		document.getElementById('meter0').setAttribute('value', temp0);
+
+		webiopi().setLabel("macro0", "Temp 0 . " + temp0 +" °C");
+	}
+
+        setInterval ("callMacro_Lum()", 5000);{
+       }
+        function callMacro_Lum(){
+                var args = [0]
+                webiopi().callMacro("Lum", args, macro_Lum_Callback);}
+        function macro_Lum_Callback(macro, args, data){
+
+                lum0 = data.split(" ")[0];
+                myDiv1.innerHTML = data.split(" ")[0] +" V";
+                document.getElementById('meter1').setAttribute('value', lum0);
+
+                webiopi().setLabel("macro1", "Lum 0 . " + lum0 +" Volt");
+        }
+
+        setInterval ("callMacro_sendLum()", 60000);{
+       }
+
+        function callMacro_sendLum(){
+                var args = [0]
+                webiopi().callMacro("sendLum", args, macro_sendLum_Callback);}
+        function macro_sendLum_Callback(macro, args, data){
+        }
+
+ </script>
+
+ <style type="text/css">
+
+ .Temp		{	background-color: Yellow;
+                        display: block; 
+			margin: 5px 5px 5px 5px; 
+			width: 129px; 
+			height: 40px;
+			border-radius:10px;
+			font-size: 8pt; 
+			font-weight: 600;
+			color: Black; 			} 
+                
+ #gpio17.LOW 	{	background-color: Gray;	 
+			display: block; 
+			margin: 5px 5px 5px 5px; 
+			width: 129px; 
+			height: 40px;
+			border-radius:10px;
+                        border:3px solid Red;
+			font-size: 8pt; 
+			font-weight: 600;
+			color: White; 			}
+
+ #gpio17.HIGH {	background-color: Red;		 
+			display: block; 
+			margin: 5px 5px 5px 5px; 
+			width: 129px; 
+			height: 40px;
+			border-radius:10px;
+			font-size: 8pt; 
+			font-weight: 600;
+			color: Black; 			}  
+
+ .ON 		{	background-color: CornflowerBlue;		 
+			display: block; 
+			margin: 0px 0px 0px 4px; 
+			width: 129px; 
+			height: 40px;
+			border-radius:10px;
+			font-size: 8pt; 
+			font-weight: 600;
+			color: Black; 		}
+
+ .OFF		{	background-color: LightBlue;	 
+			display: block; 
+			margin: 0px 0px 0px 4px; 
+			width: 129px; 
+			height: 40px;
+			border-radius:10px;
+			font-size: 8pt; 
+			font-weight: 600;
+			color: Black;  			}
+button {
+                        display: block;
+                        margin: 5px 5px 5px 5px;
+                        width: 160px;
+                        height: 45px;
+                        font-size: 24pt;
+                        font-weight: bold;
+                        color: white;
+                }
+
+#gpio2.LOW {
+                        background-color: Black;
+                }
+
+#gpio2.HIGH {
+                        background-color: Blue;
+                }
+
+#g1, #g2, #g3, #g8, #g9 {
+        width:150px; height:78px;
+        display: inline-block;
+        margin: 0em;
+}
+
+</style>
+   
+    <script src="resources/js/raphael.2.1.0.min.js"></script>
+    <script src="resources/js/justgage.1.0.1.js"></script>
+    <script>
+
+      var g1;      
+      var g2;
+      window.onload = function(){
+        var g1 = new JustGage({
+          id: "g1",
+          value: 0, 
+          min: -10,
+          max: 45,
+          decimals: 2,
+          title: "Temperature",
+          titleFontColor: "Black",
+          label: "°C",
+	});
+
+        var g2 = new JustGage({
+          id: "g2",
+          value: 0, 
+          min: -5,
+          max: 5,
+          decimals: 2,
+          title: "Luminosity",
+          titleFontColor: "Black",
+          label: "V",
+        });
+
+        setInterval(function() {
+		g1.refresh(temp0);
+        }, 4500);
+
+        setInterval(function() {
+                g2.refresh(lum0);
+        }, 4500);
+      };
+
+  </script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script src="resources/js/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript">
+                  google.load("visualization", "1", {packages:["corechart"]});
+                  google.setOnLoadCallback(drawChart);
+                  function drawChart() {
+                      var chartData = new google.visualization.DataTable();
+                      chartData.addColumn('datetime', 'Date');
+                      chartData.addColumn('number', "hits");
+                      var accessKey = "lightkey";
+                      var email = "rgiungato@gmail.com";
+                      var path = "http://cloud.nimbits.com/service/v2/series";
+                      var options = {
+                          width: 400, height: 140,
+                          title: 'Temperature'
+                      };
+                      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                      $.get(path,
+                              { email: email, id: "sermigTempi", key:accessKey },
+                              function(data){
+                                  var results = eval(data);
+                                  for (var i=0; i < results.length; i++) {
+                                      var value = results[i];
+                                      var date = new Date(value.t);
+                                      chartData.addRow([date, value.d]);
+                                  }
+                                  chart.draw(chartData, options);
+                              }
+                      );
+                  }
+                  google.setOnLoadCallback(drawChart2);
+                  function drawChart2() {
+                      var chartData = new google.visualization.DataTable();
+                      chartData.addColumn('datetime', 'Date');
+                      chartData.addColumn('number', "hits");
+                      var accessKey = "lightkey";
+                      var email = "rgiungato@gmail.com";
+                      var path = "http://cloud.nimbits.com/service/v2/series";
+                      var options = {
+                          width: 400, height: 140,
+                          title: 'Luminosity'
+                      };
+                      var chart = new google.visualization.LineChart(document.getElementById('chart_div2'));
+                      $.get(path,
+                              { email: email, id: "sermigLumi", key:accessKey },
+                              function(data){
+                                  var results = eval(data);
+                                  for (var i=0; i < results.length; i++) {
+                                      var value = results[i];
+                                      var date = new Date(value.t);
+                                      chartData.addRow([date, value.d]);
+                                  }
+                                  chart.draw(chartData, options);
+                              }
+                      );
+                  }
+              </script>
+
+</head>
+<body>
+   	<div id="g1"></div>
+	<div id="g2"></div>
+	<P>
+	<div id="controls" align="left"></div>
+	<P>
+      	<div id="content" align="left"></div>
+	<br>
+	<br>
+	<div style="width:600px;height:auto;position:relative;">
+	<table width="600" border="1" bgcolor="#E8E8E8" align="left" cellpadding="1.8" cellspacing="2">
+		<tr>
+    			<td><font size="3">Temperature</font></td>
+    			<td align="Center"><font size="2"><div id="myDiv0"></div></font></td>
+    			<td><meter id="meter0" value= "0" min="-5" max="60" low="19" high="35" optimum="0" style="width: 65px;"></meter></td>
+			<td><div id="chart_div"></div></td>
+		</tr>
+		<tr>
+                        <td><font size="3">Luminosity</font></td>
+                        <td align="Center"><font size="2"><div id="myDiv1"></div></font></td>
+                        <td><meter id="meter1" value= "0" min="-5" max="60" low="19" high="35" optimum="0" style="width: 65px;"></meter></td>
+			<td><div id="chart_div2"></div></td>
+                </tr>
+	</table>
+ </body>
+ <script type="text/javascript">
+		var myDiv0 = document.getElementById("myDiv0"); 
+                var myDiv1 = document.getElementById("myDiv1"); 
+ </script>
+</html>
