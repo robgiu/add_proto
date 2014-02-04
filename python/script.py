@@ -3,6 +3,7 @@
 import json
 import webiopi
 import time
+from time import sleep
 import datetime
 import sys
 import subprocess
@@ -10,6 +11,7 @@ import re
 import requests
 import urllib.parse
 import urllib.request
+import os
 
 from ctypes import c_short
 sys.path.append("/root/sermig/html")
@@ -36,7 +38,8 @@ global Lum0
 Lum0 = 0
 global Lum0i
 Lum0i = 0
-
+global sleep0
+sleep0 = 0
 
 # Called by WebIOPi at script loading
 def setup():
@@ -103,16 +106,22 @@ def send_lum_nimbits():
 
 # Looped by WebIOPi
 def loop():
-	# Toggle LED each 5 seconds
+	global sleep0
+	# Toggle LED without sleeping
 	value = not GPIO.digitalRead(LED0)
-	GPIO.digitalWrite(LED0, value)
+	if (sleep0 == 10000):
+		GPIO.digitalWrite(LED0, value)
+		sleep0 = 0
+	else:
+		sleep0 = sleep0 + 1
 
-	if Lum0i > 3:
+	if (Lum0i > 3):
 		GPIO.digitalWrite(RELAY1, GPIO.HIGH)
 	else:
 		GPIO.digitalWrite(RELAY1, GPIO.LOW)
-	
-	webiopi.sleep(3)
+
+#	webiopi.sleep(3)
+
 
 # Called by WebIOPi at server shutdown
 def destroy():
@@ -149,3 +158,11 @@ def sendLum(arg0):
 	get_luminosity()
 	send_lum_nimbits()
 	return ("%s" % (Lum0))
+
+@webiopi.macro
+def Servo1(arg0):
+	os.system("echo \"23=0.1\" > /dev/pi-blaster")
+	sleep(2)
+	os.system("echo \"23=0.2\" > /dev/pi-blaster")
+	os.system("echo \"23=0\" > /dev/pi-blaster")
+	return ("%s" % ("done"))

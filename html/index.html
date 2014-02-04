@@ -9,7 +9,7 @@
 	 	temp0 = 0
 		lum0 = 0
         webiopi().ready(function() {
-              var controls, content, button, buttonR1, buttonR2;
+              var controls, content, button, buttonR1, buttonR2, buttonSM1;
               content = $("#content");
 	      controls= $("#controls");
 
@@ -28,6 +28,12 @@
                 buttonR2 = webiopi().createGPIOButton(3, "Relay 2");
                 controls.append(buttonR2);
 		webiopi().refreshGPIO(true);
+
+		// create button to control servo motor
+		buttonSM1 = webiopi().createButton("servo1", "Servo1", callServo1);
+		content.append(buttonSM1);
+	
+
 
       });
 		function callMacro_SETPIO17(){
@@ -62,6 +68,13 @@
 		document.getElementById('meter0').setAttribute('value', temp0);
 
 		webiopi().setLabel("macro0", "Temp 0 . " + temp0 +" °C");
+	}
+
+	function callServo1(){
+		var args = [0]
+		webiopi().callMacro("Servo1", args, macro_Servo1_Callback);}
+
+	function macro_Servo1_Callback(macro, args, data){
 	}
 
         setInterval ("callMacro_Lum()", 5000);{
