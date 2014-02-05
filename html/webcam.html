@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content = "height = device-height, width = 420, user-scalable = yes" /> 
+        <title>Sermig Aquaponia Control - WEBCAM</title>
+        <script type="text/javascript" src="/webiopi.js"></script>
+        <script type="text/javascript">
+	 	temp0 = 0
+		lum0 = 0
+        webiopi().ready(function() {
+              var controls, buttonSM1, buttonSM2;
+	      controls= $("#controls");
+
+		// create buttons to control servo motor
+		buttonSM1 = webiopi().createButton("servo1", "SX", callServo1);
+		controls.append(buttonSM1);
+	
+		buttonSM2 = webiopi().createButton("servo2", "DX", callServo2);
+                controls.append(buttonSM2);
+
+      });
+
+	function callServo1(){
+		var args = [0]
+		webiopi().callMacro("Servo1", args, macro_Servo1_Callback);}
+
+	function macro_Servo1_Callback(macro, args, data){
+	}
+
+        function callServo2(){
+                var args = [0]
+                webiopi().callMacro("Servo2", args, macro_Servo2_Callback);}
+
+        function macro_Servo2_Callback(macro, args, data){
+        }
+
+
+</script>
+
+<style type="text/css">
+
+button {
+                        display: block;
+                        margin: 5px 5px 5px 5px;
+                        width: 160px;
+                        height: 45px;
+                        font-size: 24pt;
+                        font-weight: bold;
+                        color: white;
+                }
+
+</style>
+
+</head>
+<body>
+
+	<div id="controls" align="left"></div>
+
+	<img src="http://casa.giungato.com:8091/?action=stream" width="320"/></noscript>
+
+</body>
+</html>
+
