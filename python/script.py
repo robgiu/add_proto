@@ -19,7 +19,7 @@ sys.path.append("/root/sermig/html")
 # Enable debug output
 webiopi.setDebug()
 
-from webiopi.devices.sensor import DS18B20
+from webiopi.devices.sensor.onewiretemp import DS18B20
 temp0 = DS18B20(slave="28-0000050364ee") 
 
 from webiopi.devices.analog import MCP3008
